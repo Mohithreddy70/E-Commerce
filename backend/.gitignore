@@ -1,0 +1,22 @@
+# Node modules
+node_modules/
+
+# Environment
+.env
+
+# Logs
+logs/
+*.log
+
+# Build / runtime
+dist/
+build/
+
+# Uploads / runtime assets
+uploads/
+temp/
+
+# OS and editor
+.DS_Store
+.vscode/
+.idea/

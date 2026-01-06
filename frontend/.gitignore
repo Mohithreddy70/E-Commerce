@@ -1,0 +1,17 @@
+# Node modules
+node_modules/
+
+# React/CRA build
+build/
+
+# Environment
+.env
+.env.local
+
+# Logs
+*.log
+
+# OS and editor
+.DS_Store
+.vscode/
+.idea/
