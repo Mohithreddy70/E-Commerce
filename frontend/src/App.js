@@ -1,6 +1,14 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Link
+} from "react-router-dom";
 
+import Home from "./pages/Home";
+import Cart from "./pages/Cart";
 function App() {
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState([]);
@@ -49,47 +57,45 @@ function App() {
     (total, item) => total + item.product.price * item.qty,
     0
   );
+return (
+  <Router>
+    <nav style={{ padding: "10px", borderBottom: "1px solid #ccc" }}>
+      <Link to="/" style={{ marginRight: "15px" }}>
+        Home
+      </Link>
 
-  return (
-    <div style={{ padding: "20px" }}>
-      <h1>E-Commerce Store</h1>
+      <Link to="/cart">
+        Cart ({cart.length})
+      </Link>
+    </nav>
 
-      <h2>Products</h2>
-      {products.map(p => (
-        <div key={p._id} style={{ border: "1px solid #ccc", margin: "10px", padding: "10px" }}>
-          <h3>{p.name}</h3>
-          <p>₹{p.price}</p>
-          <button onClick={() => addToCart(p)}>Add to Cart</button>
-        </div>
-      ))}
+    <Routes>
+      <Route
+        path="/"
+        element={
+          <Home
+            products={products}
+            addToCart={addToCart}
+          />
+        }
+      />
 
-      <hr />
+      <Route
+        path="/cart"
+        element={
+          <Cart
+            cart={cart}
+            addToCart={addToCart}
+            decreaseQty={decreaseQty}
+            removeFromCart={removeFromCart}
+            totalPrice={totalPrice}
+          />
+        }
+      />
+    </Routes>
+  </Router>
+);
 
-      <h2>Cart 🛒</h2>
-      {cart.length === 0 && <p>Cart is empty</p>}
-
-      {cart.map(item => (
-        <div key={item.product._id} style={{ marginBottom: "10px" }}>
-          <strong>{item.product.name}</strong> – ₹{item.product.price}
-          <br />
-
-          <button onClick={() => decreaseQty(item.product._id)}>-</button>
-          <span style={{ margin: "0 10px" }}>Qty: {item.qty}</span>
-          <button onClick={() => addToCart(item.product)}>+</button>
-
-          <button
-            onClick={() => removeFromCart(item.product._id)}
-            style={{ marginLeft: "10px" }}
-          >
-            Remove
-          </button>
-        </div>
-      ))}
-
-      <hr />
-      <h3>Total: ₹{totalPrice}</h3>
-    </div>
-  );
 }
 
 export default App;
