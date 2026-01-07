@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+
 import axios from "axios";
 import {
   BrowserRouter as Router,
@@ -7,17 +8,48 @@ import {
   Link
 } from "react-router-dom";
 
+
 import Home from "./pages/Home";
 import Cart from "./pages/Cart";
 function App() {
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState([]);
+  const isFirstLoad = useRef(true);
+
 
   useEffect(() => {
     axios.get("http://localhost:5000/api/products")
       .then(res => setProducts(res.data))
       .catch(err => console.error(err));
   }, []);
+useEffect(() => {
+  axios.get("http://localhost:5000/api/cart")
+    .then(res => {
+      if (res.data && res.data.items) {
+        setCart(
+          res.data.items.map(item => ({
+            product: item.productId,
+            qty: item.qty
+          }))
+        );
+      }
+      isFirstLoad.current = false; // ✅ mark load complete
+    })
+    .catch(() => {
+      isFirstLoad.current = false;
+    });
+}, []);
+useEffect(() => {
+  if (isFirstLoad.current) return; // 🚫 skip first render
+
+  axios.post("http://localhost:5000/api/cart", {
+    items: cart.map(item => ({
+      productId: item.product._id,
+      qty: item.qty
+    }))
+  });
+}, [cart]);
+
 
   // ➕ ADD TO CART (with quantity)
   const addToCart = (product) => {
